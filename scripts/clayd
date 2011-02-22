@@ -1,0 +1,18 @@
+#!/usr/bin/python2
+'''
+The clay daemon startup script
+'''
+
+import clay
+import clay.utils
+
+def main():
+    '''
+    Start up a clay daemon!
+    '''
+    clayd = clay.ClayD()
+    clay.utils.check_root()
+    clayd.clay_daemon()
+
+if __name__ == '__main__':
+    main()
