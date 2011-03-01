@@ -219,6 +219,9 @@ class Create(object):
                     return [host, True]
             if self.opts['hyper'] and resources.has_key(self.opts['hyper']):
                 return (self.opts['hyper'], False)
+            elif not resources.has_key(self.opts['hyper']):
+                # hyper specified on the command line does not exist
+                return [None, True]
             if resources[host]['cpus'] > best[0]:
                 if resources[host]['mem'] > best[1]:
                     if len(resources[host]['vms']) < best[2]:
