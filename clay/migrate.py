@@ -54,6 +54,9 @@ class Migrate(object):
         m_cmd = 'virsh migrate --live --copy-storage-inc ' + name\
               + ' qemu://' + m_data['to'] + '/system'
         src.command.run(m_cmd)
+        # Verify that the migrate was good, then call a command to move the 
+        # drives out of place on the src machine into a temp dir that gets
+        # watched by say, tempwatch
         print 'Finished migrating ' + name
 
     def clear_node(self):
