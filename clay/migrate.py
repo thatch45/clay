@@ -55,7 +55,7 @@ class Migrate(object):
               + ' waiting for completion.'
         m_cmd = 'virsh migrate --live --copy-storage-inc ' + name\
               + ' qemu://' + m_data['to'] + '/system'
-        src.command.run(m_cmd)
+        m_ret = src.command.run(m_cmd)
         tgt_vinfo = tgt.virt.info()
         up = False
         for host in tgt_vinfo:
@@ -65,6 +65,7 @@ class Migrate(object):
             # Failed to migrate
             print 'Problems occured in the migration of ' + self.opts['name']\
                 + ' Please inspect the systems manually.'
+            print m_ret
             return False
         # The migration stated, make sure it finished
         src_vinfo = src.virt.info()
@@ -75,6 +76,7 @@ class Migrate(object):
                     + ' please manually verify the migration status and clean'\
                     + ' up old files off of the source hypervisor if they'\
                     + ' apply'
+                print m_ret
                 return False
 
         # Clean up the vm disks left behind after the migration is complete
