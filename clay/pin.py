@@ -27,7 +27,7 @@ class Pin(object):
             return sec
         return pri
 
-    def _check_pins(self):
+    def check_pins(self):
         '''
         Check the instances dir to see if this image has been previously
         pinned.
@@ -37,7 +37,7 @@ class Pin(object):
             return open(pinfile, 'r').read().strip()
         return ''
 
-    def _set_pin_data(self, pin_data):
+    def set_pin_data(self, pin_data):
         '''
         Create the pin file.
         '''
