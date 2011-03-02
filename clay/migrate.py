@@ -4,6 +4,7 @@ Frontend for running vm migration
 # import clay libs
 import clay.data
 import clay.create
+import clay.pin
 
 # import func libs
 import func.overlord.client as fc
@@ -56,7 +57,33 @@ class Migrate(object):
         src.command.run(m_cmd)
         # Verify that the migrate was good, then call a command to move the 
         # drives out of place on the src machine into a temp dir that gets
-        # watched by say, tempwatch
+        # watched by say, tempwatch, then call the pin commands to make set the
+        # pin file to the correct hypervisor.
+        tgt_vinfo = tgt.virt.info()
+        up = False
+        for host in tgt_vinfo:
+            if tgt_vinfo[host].has_key(self.opts['name']):
+                up = True
+        if not up:
+            # Failed to migrate
+            print 'Problems occured in the migration of ' + self.opts['name']\
+                + ' Please inspect the systems manually.'
+            return False
+        # The migration stated, make sure it finished
+        src_vinfo = src.virt.info()
+        for host in src_vinfo:
+            if src_info[host].has_key(self.opts['name']):
+                # Migration is still in progress
+                print 'The migration is still in progress or has stalled,'\
+                    + ' please manually verify the migration status and clean'\
+                    + ' up old files off of the source hypervisor if they'\
+                    + ' apply'
+                return False
+
+        print 'Migration complete'
+
+        return True
+
         print 'Finished migrating ' + name
 
     def clear_node(self):
