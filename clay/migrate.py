@@ -55,6 +55,7 @@ class Migrate(object):
               + ' waiting for completion.'
         m_cmd = 'virsh migrate --live --copy-storage-inc ' + name\
               + ' qemu://' + m_data['to'] + '/system'
+        print 'Migration command:\n' + m_cmd
         m_ret = src.command.run(m_cmd)
         tgt_vinfo = tgt.virt.info()
         up = False
