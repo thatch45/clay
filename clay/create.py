@@ -8,6 +8,7 @@ machine.
 # Import clay libs
 import clay.data
 import clay.utils
+import clay.pin
 # Import func libs
 import func.overlord.client as fc
 # Import python libs
@@ -50,6 +51,7 @@ class Create(object):
     '''
     def __init__(self, opts):
         self.opts = opts
+        self.pin = clay.pin.Pin(opts)
         self.instance = self.__gen_instance()
         self.data = clay.data.HVStat()
         self.hyper = self.data.hyper
@@ -274,23 +276,6 @@ class Create(object):
             return
         shutil.move(os.path.join(image_d, images[0]), vda)
 
-    def _check_pins(self):
-        '''
-        Check the instances dir to see if this image has been previously
-        pinned
-        '''
-        pinfile = os.path.join(self.instance, 'pin')
-        if os.path.isfile(pinfile):
-            return open(pinfile, 'r').read().strip()
-        return ''
-
-    def _set_pin_data(self, pin_data):
-        '''
-        Create the pin file
-        '''
-        pinfile = os.path.join(self.instance, 'pin')
-        open(pinfile, 'w+').write(pin_data)
-
     def _check_existing(self, vda, conf):
         '''
         Check to see if the virtual machine image exists. It is does return
@@ -310,7 +295,7 @@ class Create(object):
         if not os.path.isdir(self.instance):
             os.makedirs(self.instance)
         else:
-            pin_data = self._check_pins()
+            pin_data = self.pin.check_pins()
         if pin_data:
             h_data[0] = pin_data
         if h_data[1]:
@@ -344,13 +329,13 @@ class Create(object):
             # The pin image file needs to be created
             target.clayvm.gen_pin_image(self.opts['pin'], self.opts['name'],
                     group, user)
-            self._set_pin_data(h_data[0])
+            self.pin.set_pin_data(h_data[0])
         target.command.run('chown ' + user + ':' + group + ' ' + vda)
         self._set_overlay(vda, target)
         if self.opts['rpp']:
             target.clayvm.set_rpp(vda, self.opts['rpp'])
             target.command.run('chown ' + user + ':' + group + ' ' + self.opts['rpp'])
-            self._set_pin_data(h_data[0])
+            self.pin.set_pin_data(h_data[0])
         self._start_vm(conf, target, h_data[0])
         return True
 
