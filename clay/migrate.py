@@ -82,6 +82,7 @@ class Migrate(object):
             if block['local']:
                 rm_cmd = 'rm -rf ' + os.path.dirname(block['path'])
                 src.command.run(rm_cmd)
+                self.pin.set_pin_data(m_data['to'])
 
         print 'Migration complete'
 
