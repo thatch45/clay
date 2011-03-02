@@ -15,6 +15,7 @@ class Migrate(object):
     '''
     def __init__(self, opts):
         self.opts = opts
+        self.pin = clay.pin.Pin(opts)
         self.data = clay.data.HVStat()
 
     def run_logic(self):
@@ -55,10 +56,6 @@ class Migrate(object):
         m_cmd = 'virsh migrate --live --copy-storage-inc ' + name\
               + ' qemu://' + m_data['to'] + '/system'
         src.command.run(m_cmd)
-        # Verify that the migrate was good, then call a command to move the 
-        # drives out of place on the src machine into a temp dir that gets
-        # watched by say, tempwatch, then call the pin commands to make set the
-        # pin file to the correct hypervisor.
         tgt_vinfo = tgt.virt.info()
         up = False
         for host in tgt_vinfo:
@@ -79,6 +76,12 @@ class Migrate(object):
                     + ' up old files off of the source hypervisor if they'\
                     + ' apply'
                 return False
+
+        # Clean up the vm disks left behind after the migration is complete
+        for block in blocks:
+            if block['local']:
+                rm_cmd = 'rm -rf ' + os.path.dirname(block['path'])
+                src.command.run(rm_cmd)
 
         print 'Migration complete'
 
