@@ -303,7 +303,7 @@ class Create(object):
         target = fc.Overlord(h_data[0], timeout=2400)
         if not os.path.isdir(self.opts['pool']):
             return False
-        vda = os.path.join(self.instance, 'disk0.qcow2')
+        vda = os.path.join(self.instance, 'disk0')
         conf = os.path.join(self.instance, 'config.xml')
         if self._check_existing(vda, conf):
             self._start_vm(conf, target, h_data[0])
