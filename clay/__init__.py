@@ -336,9 +336,9 @@ class ClayVM(object):
         '''
         Returns the fqdn for the deployment, derived from the master's resolv.conf.
         '''
-        for line in open('/etc/resolv.conf', 'r').readlines():
-            if line.strip().startswith('domain'):
-                return line.strip().split()[-1]
+        return subprocess.Popen('dnsdomainname',
+                shell=True,
+                stdout=subprocess.PIPE).communicate()[0].strip()
 
     def __generate_macs(self, dhcp_dir, name):
         '''
