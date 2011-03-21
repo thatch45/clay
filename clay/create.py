@@ -220,7 +220,7 @@ class Create(object):
                     # The vm already exists in the cloud
                     return [host, True]
             if self.opts['hyper'] and resources.has_key(self.opts['hyper']):
-                return (self.opts['hyper'], False)
+                return [self.opts['hyper'], False]
             elif not resources.has_key(self.opts['hyper']):
                 # hyper specified on the command line does not exist
                 return [None, True]
